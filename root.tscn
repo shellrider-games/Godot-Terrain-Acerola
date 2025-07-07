@@ -5,7 +5,7 @@
 
 [sub_resource type="Environment" id="Environment_7owt0"]
 background_mode = 1
-background_color = Color(0.239216, 0.239216, 0.239216, 1)
+background_color = Color(0.504487, 0.682764, 0.882254, 1)
 tonemap_white = 1.68
 glow_normalized = true
 glow_intensity = 1.75
@@ -21,38 +21,39 @@ needs_motion_vectors = false
 needs_normal_roughness = false
 script = ExtResource("2_pyidc")
 regenerate = false
-side_length = 400
-mesh_scale = 0.5
+side_length = 450
+mesh_scale = 1.0
 wireframe = false
-noise_seed = 135
-zoom = 139.5
+noise_seed = 152
+zoom = 128.0
 offset = Vector3(-200, 95.655, -326.08)
 gradient_rotation = 68.645
 octave_count = 12
-rotation = -26.99
+rotation = 25.183
 angular_variance = Vector2(-15, 15)
 initial_amplitude = 0.739
-amplitude_decay = 0.439
-lacunarity = 1.991
+amplitude_decay = 0.407
+lacunarity = 1.956
 frequency_variance = Vector2(-0.085, 0.115)
-height_scale = 90.9
+height_scale = 84.5
 slope_damping = 0.155
 slope_threshold = Vector2(0.84, 0.98)
 low_slope_color = Color(0.366477, 0.373384, 0.0777902, 1)
 high_slope_color = Color(0.1, 0.05835, 0.049, 1)
-ambient_light = Color(0.192, 0.2712, 0.3, 1)
+ambient_light = Color(0.401409, 0.4876, 0.43124, 1)
 metadata/_custom_type_script = "uid://7n58awc2ols0"
 
 [sub_resource type="Compositor" id="Compositor_1i1cu"]
 compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5c"), null])
 
 [node name="Root" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.204086, 0.526123, -0.27047)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.587785, 0.0338782, 0.808308, 8.73461e-08, -0.999123, 0.0418757, 0.809017, -0.0246138, -0.587269, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.60854)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.621, 25.9182, 106.999)
 script = ExtResource("1_hekff")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

@@ -1,7 +1,6 @@
 @tool
 class_name DrawTerrainMesh extends CompositorEffect
 
-
 ## Regenerate mesh data and recompile shaders TODO: Separate mesh generation and shader recompilation
 @export var regenerate : bool = true
 
@@ -105,6 +104,7 @@ func _init():
 	var tree := Engine.get_main_loop() as SceneTree
 	var root : Node = tree.edited_scene_root if Engine.is_editor_hint() else tree.current_scene
 	if root: light = root.get_node_or_null('DirectionalLight3D')
+	
 
 # Compiles... the shader...?
 func compile_shader(vertex_shader : String, fragment_shader : String) -> RID:
@@ -274,6 +274,8 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 
 	var buffer = Array()
 
+	var camera_position = render_scene_data.get_cam_transform().origin
+
 	# Assemble the model, view, and projection matrices for vertex world space -> clip space conversion (watch PS1 video if you care about how this works but otherwise it just works(tm))
 	var model = transform
 	var view = render_scene_data.get_cam_transform().inverse()
@@ -298,6 +300,7 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 			push_error("No light source detected please put a DirectionalLight3D into the scene thank you")
 	else:
 		light_direction = light.transform.basis.z.normalized()
+		
 
 	# Store all shader uniforms in a gpu data buffer, this isn't exactly the optimal data layout, each 1.0 push back is wasted space
 	buffer.push_back(light_direction.x)
@@ -336,6 +339,11 @@ func _render_callback(_effect_callback_type : int, render_data : RenderData):
 	buffer.push_back(ambient_light.g)
 	buffer.push_back(ambient_light.b)
 	buffer.push_back(1.0)
+	buffer.push_back(camera_position.x)
+	buffer.push_back(camera_position.y)
+	buffer.push_back(camera_position.z)
+	buffer.push_back(0.0)
+	
 	
 
 	# All of our settings are stored in a single uniform buffer, certainly not the best decision, but it's easy to work with
@@ -429,6 +437,8 @@ const source_vertex = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec3 _CameraPosition;
+			float _Padding0;
 		};
 		
 		// This is the vertex data layout that we defined in initialize_render after line 198
@@ -588,6 +598,8 @@ const source_vertex = "
 			// Adjust height of the vertex by fbm result scaled by final desired amplitude
 			pos.y += _TerrainHeight * n.x + _TerrainHeight - _Offset.y;
 			
+			
+			
 			// Multiply final vertex position with model/view/projection matrices to convert to clip space
 			gl_Position = MVP * vec4(pos, 1);
 		}
@@ -620,6 +632,8 @@ const source_fragment = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec3 _CameraPosition;
+			float _Padding0;
 		};
 		
 		// These are the variables that we expect to receive from the vertex shader
@@ -791,8 +805,17 @@ const source_fragment = "
 			// Combine lighting values, clip to prevent pixel values greater than 1 which would really really mess up the gamma correction below
 			vec4 lit = clamp(direct_light + ambient_light, vec4(0), vec4(1));
 
+			float distance_to_camera = distance(pos, _CameraPosition);
+			
+			float raw_blend_factor = smoothstep(20.0, 200.0, distance_to_camera);
+			
+			float scaled_blend_factor = raw_blend_factor * 0.7; 
+			
 			// Convert from linear rgb to srgb for proper color output, ideally you'd do this as some final post processing effect because otherwise you will need to revert this gamma correction elsewhere
-			frag_color = pow(lit, vec4(2.2));
+			
+			// frag_color = pow(lit, vec4(2.2));
+			
+			frag_color = mix(lit, vec4(0.6, 0.6, 0.6, 0.5), scaled_blend_factor);
 		}
 		"
 
@@ -822,6 +845,8 @@ const source_wire_fragment = "
 			float _FrequencyVarianceUpperBound;
 			float _SlopeDamping;
 			vec4 _AmbientLight;
+			vec3 _cameraPosition;
+			float _Padding0;
 		};
 		
 		layout(location = 2) in vec4 a_Color;
