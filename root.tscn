@@ -39,7 +39,7 @@ height_scale = 84.5
 slope_damping = 0.155
 slope_threshold = Vector2(0.84, 0.98)
 low_slope_color = Color(0.366477, 0.373384, 0.0777902, 1)
-high_slope_color = Color(0.1, 0.05835, 0.049, 1)
+high_slope_color = Color(0.238412, 0.203034, 0.152641, 1)
 ambient_light = Color(0.401409, 0.4876, 0.43124, 1)
 metadata/_custom_type_script = "uid://7n58awc2ols0"
 
@@ -50,7 +50,7 @@ compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_vvh5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.204086, 0.526123, -0.27047)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.587785, 0.0338782, 0.808307, 8.73461e-08, -0.999123, 0.0418757, 0.809017, -0.0246138, -0.587269, -131.689, 67.8881, -0.716431)
+transform = Transform3D(0.587785, 0.0338782, 0.808308, 8.73461e-08, -0.999123, 0.0418757, 0.809017, -0.0246138, -0.587269, -131.957, 67.8881, -0.335511)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.621, 25.9182, 106.999)

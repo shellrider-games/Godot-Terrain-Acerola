@@ -799,7 +799,7 @@ const source_fragment = "
 			// Lambertian diffuse, negative dot product values clamped off because negative light doesn't exist
 			float ndotl = clamp(dot(_LightDirection, normal), 0, 1);
 
-			vec3 view_dir = normalize(pos - _CameraPosition);
+			vec3 view_dir = normalize(_CameraPosition - pos);
 			vec3 halfVector = normalize(_LightDirection + view_dir);
 			float ndoth = clamp(dot(halfVector, normal), 0, 1);
 
@@ -808,7 +808,7 @@ const source_fragment = "
 			vec4 ambient_light = albedo * _AmbientLight;
 			
 			float specAngle = clamp(dot(halfVector, normal), 0, 1);
-			vec4 specular_light = vec4(0.5, 0.7, 0.9, 1) * pow(specAngle, 16.0);
+			vec4 specular_light = vec4(0.5, 0.7, 0.9, 1) * pow(specAngle, 32.0) * 0.3f;
 
 
 			// Combine lighting values, clip to prevent pixel values greater than 1 which would really really mess up the gamma correction below
