@@ -74,6 +74,7 @@ class_name DrawTerrainMesh extends CompositorEffect
 @export var ambient_light : Color = Color.DIM_GRAY
 
 
+
 var transform : Transform3D
 var light : DirectionalLight3D
 
@@ -798,12 +799,20 @@ const source_fragment = "
 			// Lambertian diffuse, negative dot product values clamped off because negative light doesn't exist
 			float ndotl = clamp(dot(_LightDirection, normal), 0, 1);
 
+			vec3 view_dir = normalize(pos - _CameraPosition);
+			vec3 halfVector = normalize(_LightDirection + view_dir);
+			float ndoth = clamp(dot(halfVector, normal), 0, 1);
+
 			// Direct light cares about the diffuse result, ambient light does not
 			vec4 direct_light = albedo * ndotl;
 			vec4 ambient_light = albedo * _AmbientLight;
+			
+			float specAngle = clamp(dot(halfVector, normal), 0, 1);
+			vec4 specular_light = vec4(0.5, 0.7, 0.9, 1) * pow(specAngle, 16.0);
+
 
 			// Combine lighting values, clip to prevent pixel values greater than 1 which would really really mess up the gamma correction below
-			vec4 lit = clamp(direct_light + ambient_light, vec4(0), vec4(1));
+			vec4 lit = clamp(direct_light + ambient_light + specular_light, vec4(0), vec4(1));
 
 			float distance_to_camera = distance(pos, _CameraPosition);
 			
@@ -815,7 +824,7 @@ const source_fragment = "
 			
 			// frag_color = pow(lit, vec4(2.2));
 			
-			frag_color = mix(lit, vec4(0.6, 0.6, 0.6, 0.5), scaled_blend_factor);
+			frag_color = pow(mix(lit, vec4(0.6, 0.6, 0.6, 0.5), scaled_blend_factor),vec4(2.2));
 		}
 		"
 
